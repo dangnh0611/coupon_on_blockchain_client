@@ -3,18 +3,29 @@ package Roles;
 import ContractWrapper.Campain;
 import ContractWrapper.CampainFactory;
 import io.reactivex.Flowable;
+import io.reactivex.disposables.Disposable;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyFactorySpi;
+import org.reactivestreams.Subscription;
+import org.web3j.abi.EventEncoder;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.EthFilter;
 import org.web3j.protocol.core.methods.response.EthLog;
+import org.web3j.protocol.core.methods.response.Log;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Issuer extends General {
     public Issuer(String _private_key){
         super(_private_key);
+    }
+
+    public class Distributor{
+        public String address;
+        public long num_acquired;
+        public long num_redeemed;
     }
 
     /** Tạo campain mới.
@@ -35,15 +46,46 @@ public class Issuer extends General {
         }
     }
 
-    public List<EthLog.LogResult> createFilterForEvent() throws Exception {
-        EthFilter ethFilter =
+    public List<CampainFactory.NewCampainEventResponse> getOwnedCampains() throws Exception {
+        EthFilter filter =
                 new EthFilter(
                         DefaultBlockParameterName.EARLIEST,
                         DefaultBlockParameterName.LATEST,
-                        this.factory_address);
-        EthLog ethLog = web3j.ethGetLogs(ethFilter).send();
-        return ethLog.getLogs();
+                        this.factory_address).addSingleTopic(EventEncoder.encode(CampainFactory.NEWCAMPAIN_EVENT)).addOptionalTopics("0x000000000000000000000000"+this.address.substring(2));
+        List<CampainFactory.NewCampainEventResponse> events= new ArrayList<CampainFactory.NewCampainEventResponse>();
+        Disposable sub = this.factory.newCampainEventFlowable(filter).subscribe(event->{events.add(event);});
+        sub.dispose();
+        return events;
     }
 
+    public List<Distributor>  getOwnedDistributors(String campain_address) throws  Exception{
+        Campain campain = this.utils.loadCampain(campain_address);
+        List<Distributor> rets = new ArrayList<Distributor>();
+        for(int i = 0; i<50; i++) {
+            Distributor dis = new Distributor();
+            dis.address = campain.get_distributors_address(BigInteger.valueOf(i)).sendAsync().get();
+            if(dis.address.equals("0x0000000000000000000000000000000000000000")){
+                continue;
+            }
+            List<BigInteger> status = campain.get_distributors_status(BigInteger.valueOf(i)).sendAsync().get();
+            dis.num_acquired=Long.valueOf(status.get(0).longValue());
+            dis.num_redeemed=Long.valueOf(status.get(1).longValue());
+            rets.add(dis);
+        }
+        return rets;
+    }
+
+    public void addDistributor(String campain_address, String distributor_address) throws Exception{
+        this.utils.loadCampain(campain_address).add_distributor(distributor_address).sendAsync().get();
+    }
+
+    public void removeDistributor(String campain_address, String distributor_address) throws Exception{
+        this.utils.loadCampain(campain_address).remove_distributor(distributor_address).sendAsync().get();
+    }
+
+    // Quên chưa viết function contract này, bổ sung sau.
+//    public void addBearerToCampain(String campain_address, String bearer_address) throws Exception{
+//        this.utils.loadCampain(campain_address).
+//    }
 
 }

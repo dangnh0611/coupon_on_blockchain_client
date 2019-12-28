@@ -6,7 +6,6 @@ import ContractWrapper.Campain;
 import ContractWrapper.CampainFactory;
 import Roles.Issuer;
 import io.reactivex.Flowable;
-import jdk.internal.org.objectweb.asm.Type;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
@@ -21,25 +20,34 @@ import static org.web3j.tx.Transfer.GAS_LIMIT;
 import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
 
 public class Main {
-    static String infura_url="https://ropsten.infura.io/v3/8f21cada4d3d48db8e74bd7643afad9c";
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         System.out.println("Start..");
-//        Web3j web3j = Web3j.build(new HttpService(infura_url));
-//        Credentials credentials = Credentials.create("d7c2467297b410e676dc1c0bf58e1e6ef9892d05290d48c0a71d6f6207cf92ff");
-//        Campain contract = Campain.load("0x248B9b1BbE41b964eC7D66f84d29bF19BB483222", web3j, credentials, BigInteger.valueOf(8L), BigInteger.valueOf(500000L));
-//        System.out.println(contract.get_campain_description().send());
-////        contract.add_distributor("0x2871FAFE199c6EFDD4a938387B5c0108027513be").send();
-//        contract.add_distributor("0x16FA6349E3fbA711D0cE342674990a6D00aF9B18").sendAsync().get();
-
         Issuer iss = new Issuer("d7c2467297b410e676dc1c0bf58e1e6ef9892d05290d48c0a71d6f6207cf92ff");
-//        iss.createCampain(0,false, 2,"Campain2", "food", "sale off 50% all food at REGR", 100);
 
-        List<EthLog.LogResult> rets = iss.createFilterForEvent();
-        System.out.println(rets);
-        for (EthLog.LogResult ret: rets){
-            System.out.println(ret);
-        }
+        // Tạo campain mới
+//        iss.createCampain(10,false, 2,"Campain2", "food", "sale off 50% all food at REGR", 100);
 
-        System.out.println("End!");
+        // Lấy danh sách các campain mà issuer đã tạo.
+//        for(CampainFactory.NewCampainEventResponse e: iss.getOwnedCampains()){
+//            System.out.println("Campain Address: "+e._address);
+//            System.out.println("Campain Name: "+e._name);
+//            System.out.println("Campain_Description: "+e._description);
+//            System.out.println("Campain Num_coupons: " + e._num_coupon);
+//            System.out.println("Campain Endtime: "+ e._end_time);
+//            System.out.println("--------------------------------");
+//        }
+
+        // Lấy danh sách thông tin các distributor tham gia vào một campain.
+//        for(Issuer.Distributor dis: iss.getOwnedDistributors("0x6B7EF57989E01E7e3825622669f20af06fdf2B8b")){
+//            System.out.println(dis.address+"  "+dis.num_redeemed+"  "+ dis.num_acquired);
+//            System.out.println("-------------------------------");
+//        }
+
+        // Thêm distributor.
+//        iss.addDistributor("0xf23a159Fc06FfbedF103BA67905000E18b26B734","0xf3A566312478c62e05B1958020B3e837C8E21B42");
+
+        // Xóa distributor.
+        iss.removeDistributor("0xf23a159Fc06FfbedF103BA67905000E18b26B734","0xf3A566312478c62e05B1958020B3e837C8E21B42");
+            System.out.println("End!");
     }
 }
