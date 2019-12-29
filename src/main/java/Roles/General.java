@@ -13,18 +13,40 @@ import java.math.BigInteger;
 public class General {
     protected String private_key;
     protected String address;
-    protected final String infura_url="https://ropsten.infura.io/v3/8f21cada4d3d48db8e74bd7643afad9c";
-    protected final String factory_address="0x14B9a9Da15905c6cE4048908C7150AEDB1e68DF8";
+    protected final String infura_wss = "wss://ropsten.infura.io/ws/v3/8f21cada4d3d48db8e74bd7643afad9c";
+    protected final String factory_address = "0xc7F20AEE2258DA559B51195ADfA0409931B1F4D5";
     protected Credentials credentials;
     protected Web3j web3j;
     protected Utils utils;
     protected CampainFactory factory;
 
+    public class CampainInfo{
+        public String address;
+        public String name;
+        public String category;
+        public String description;
+        public Long endtime;
+        public long total_coupons;
+        public Long num_remain;
+        public Long num_redeemed;
+        public CampainInfo(String _address,String _name, String _category, String _description, long _endtime, long _total_coupons, long _num_remain, long _num_reddemed){
+            this.address = _address;
+            this.name=_name;
+            this.category=_category;
+            this.description=_description;
+            this.endtime=_endtime;
+            this.total_coupons=_total_coupons;
+            this.num_remain =_num_remain;
+            this.num_redeemed=_num_reddemed;
+        }
+    }
+
+
     public General(String _private_key){
         this.private_key=_private_key;
         this.credentials = Credentials.create(this.private_key);
         this.address=credentials.getAddress();
-        WebSocketService web3jService = new WebSocketService("wss://ropsten.infura.io/ws/v3/8f21cada4d3d48db8e74bd7643afad9c",true);
+        WebSocketService web3jService = new WebSocketService(this.infura_wss,true);
         try {
             web3jService.connect();
         }
