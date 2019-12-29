@@ -2,6 +2,7 @@ package Roles;
 
 import ContractWrapper.Campain;
 import ContractWrapper.CampainFactory;
+import Utils.Utils;
 import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyFactorySpi;
@@ -87,5 +88,18 @@ public class Issuer extends General {
 //    public void addBearerToCampain(String campain_address, String bearer_address) throws Exception{
 //        this.utils.loadCampain(campain_address).
 //    }
+
+    public void confirmUsingCoupon(String qr_text) throws Exception {
+        String[] splited = qr_text.split("\\s+");
+        String campain_address = splited[0];
+        String bearer_address = splited[1];
+        byte[] hash = Utils.hexStringToByteArray(splited[2]);
+        byte[] v = Utils.hexStringToByteArray(splited[3]);
+        byte[] r = Utils.hexStringToByteArray(splited[4]);
+        byte[] s = Utils.hexStringToByteArray(splited[5]);
+        this.utils.loadCampain(campain_address).redeem(bearer_address,hash, new BigInteger(1, v),new BigInteger(1, r),
+                new BigInteger(1, s))
+                .sendAsync().get();
+    }
 
 }

@@ -28,7 +28,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         System.out.println("Start..");
         Issuer iss = new Issuer("d7c2467297b410e676dc1c0bf58e1e6ef9892d05290d48c0a71d6f6207cf92ff");
-        Bearer br = new Bearer("dbbb23642c1a0cc749027d558c6cf2c30d08590bfe471021f924c002c8af5243");
+        Bearer br = new Bearer("227955d7ff410da1c6f0e50c8f8280d7ee37ca75590302b69b7b66797d34f968");
         Distributor dis = new Distributor("6e2211d3e98c4fc33906246c11bc900cb0302e7cec62628f882ca17273dbc1f8");
 
         // Tạo campain mới
@@ -59,22 +59,38 @@ public class Main {
         // Kịch bản khi Bearer quét mã QR để nhận coupon
         // Đầu tiên, giả sử rằng QR đã tồn tại, tức là được distributor tạo ra cho mình bearer có thể sử dụng
         // Bearer quét QR và nhận được đoạn qr_text
-//        String qr_text = dis.generateQRForBearer("0x57a444709f157DdfFCFDd6efC2117F8bD0BBA478", "0x855108d766f477f7716636386e4BC2B69c65EFFE");
+//        String qr_text = dis.generateQRForBearer("0x57a444709f157DdfFCFDd6efC2117F8bD0BBA478", "0x2871FAFE199c6EFDD4a938387B5c0108027513be");
 
 //        // Ngay khi quét được, bearer gọi tới hàm này để nhận coupon.
 //        br.aquire(qr_text);
 
 //         Lấy danh sách các campain mà bearer đã lấy coupon thành công.
-        for(General.CampainInfo e: br.getAllAcquiredCampains()){
-            System.out.println("Campain Address: "+e.address);
-            System.out.println("Campain Name: "+e.name);
-            System.out.println("Campain_Description: "+e.description);
-            System.out.println("Campain Num_coupons: " + e.total_coupons);
-            System.out.println("Campain Num_remain: " + e.num_remain);
-            System.out.println("Campain Num_redeemed: " + e.num_redeemed);
-            System.out.println("Campain Endtime: "+ e.endtime);
-            System.out.println("--------------------------------");
-        }
+//        for(General.CampainInfo e: br.getAllAcquiredCampains()){
+//            System.out.println("Campain Address: "+e.address);
+//            System.out.println("Campain Name: "+e.name);
+//            System.out.println("Campain_Description: "+e.description);
+//            System.out.println("Campain Num_coupons: " + e.total_coupons);
+//            System.out.println("Campain Num_remain: " + e.num_remain);
+//            System.out.println("Campain Num_redeemed: " + e.num_redeemed);
+//            System.out.println("Campain Endtime: "+ e.endtime);
+//            System.out.println("--------------------------------");
+//        }
+
+        //
+        String qr_for_using = br.generateQRToConfirmUsingCoupon("0x57a444709f157DdfFCFDd6efC2117F8bD0BBA478");
+
+        //
+        iss.confirmUsingCoupon(qr_for_using);
+
+        // Lấy danh sách các campain mà issuer đã tạo.
+//        for(CampainFactory.NewCampainEventResponse e: br.getAllFreeCoupons()){
+//            System.out.println("Campain Address: "+e._address);
+//            System.out.println("Campain Name: "+e._name);
+//            System.out.println("Campain_Description: "+e._description);
+//            System.out.println("Campain Num_coupons: " + e._num_coupon);
+//            System.out.println("Campain Endtime: "+ e._end_time);
+//            System.out.println("--------------------------------");
+//        }
 
 
         System.out.println("End!");

@@ -35,6 +35,11 @@ public class Bearer extends General {
         Disposable sub = this.factory.acquireEventFlowable(filter).subscribe(event->{
             String campain_addr=event._campain;
             Campain cp = this.utils.loadCampain(campain_addr);
+            List<Boolean> br_status = cp.get_bearer_status(this.address).sendAsync().get();
+            Boolean is_transfered = br_status.get(1);
+            Boolean is_redeemed = br_status.get(2);
+            if(is_transfered || is_redeemed ){}
+            else{
             List<BigInteger> status= cp.get_campain_status().sendAsync().get();
             campain_infos.add(new CampainInfo(
                     campain_addr,
@@ -45,7 +50,7 @@ public class Bearer extends General {
                     status.get(0).longValue(),
                     status.get(1).longValue(),
                     status.get(2).longValue()));
-        });
+        }});
         sub.dispose();
         return campain_infos;
     }
@@ -63,6 +68,41 @@ public class Bearer extends General {
                 .sendAsync().get();
     }
 
+    // Bearer sử dụng coupon tại quầy, mở hình QR code để quầy (issuer) quét và confirm sử dụng coupon.
+    public String generateQRToConfirmUsingCoupon(String campain_address){
+        byte[] campain = Utils.hexStringToByteArray(campain_address.substring(2));
+        byte[] address = Utils.hexStringToByteArray(this.address.substring(2));
+        System.out.println(campain.length+address.length);
+        byte[] msg = new byte[64];
+        System.arraycopy(address,0,msg,12,20);
+        System.arraycopy(campain, 0,msg,44,20);
+        byte[] hash = Hash.sha3(msg);
+        String hash_str = Utils.byteArrayToHexString(hash);
+        System.out.println(hash_str);
+        Sign.SignatureData sig = Sign.signMessage(hash, Credentials.create(this.private_key).getEcKeyPair(), false);
+        String v_str = Utils.byteArrayToHexString(sig.getV());
+        String r_str = Utils.byteArrayToHexString(sig.getR());
+        String s_str = Utils.byteArrayToHexString(sig.getS());
+        String qr_text = campain_address + " " + this.address+ " " + hash_str + " " + v_str + " " + r_str + " " + s_str;
+        System.out.println(qr_text);
+        return qr_text;
+    }
+
+    public void transferCoupon(String campain_address, String to) throws Exception{
+        this.utils.loadCampain(campain_address).transfer_coupon(to);
+    }
+
+    public List<CampainFactory.NewCampainEventResponse> getAllFreeCoupons(){
+        EthFilter filter =
+                new EthFilter(
+                        DefaultBlockParameterName.EARLIEST,
+                        DefaultBlockParameterName.LATEST,
+                        this.factory_address).addSingleTopic(EventEncoder.encode(CampainFactory.NEWCAMPAIN_EVENT)).addOptionalTopics(null,"0x0000000000000000000000000000000000000000000000000000000000000001" );
+        List<CampainFactory.NewCampainEventResponse> events= new ArrayList<CampainFactory.NewCampainEventResponse>();
+        Disposable sub = this.factory.newCampainEventFlowable(filter).subscribe(event->{events.add(event);});
+        sub.dispose();
+        return events;
+    }
 
 
 

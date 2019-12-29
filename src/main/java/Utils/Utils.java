@@ -25,11 +25,11 @@ public class Utils {
     }
 
     public Campain loadCampain(String address){
-        return Campain.load(address, web3j, credentials, BigInteger.valueOf(8L), BigInteger.valueOf(500000L));
+        return Campain.load(address, web3j, credentials, BigInteger.valueOf(3L), BigInteger.valueOf(300000L));
     }
 
     public CampainFactory loadFactory(String address){
-        return CampainFactory.load(address, web3j, credentials, BigInteger.valueOf(8L), BigInteger.valueOf(5000000L));
+        return CampainFactory.load(address, web3j, credentials, BigInteger.valueOf(3L), BigInteger.valueOf(700000L));
     }
 
     public static byte[] hexStringToByteArray(String s) {
