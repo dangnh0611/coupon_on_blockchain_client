@@ -14,7 +14,7 @@ public class General {
     protected String private_key;
     protected String address;
     protected final String infura_wss = "wss://ropsten.infura.io/ws/v3/8f21cada4d3d48db8e74bd7643afad9c";
-    protected final String factory_address = "0xc7F20AEE2258DA559B51195ADfA0409931B1F4D5";
+    protected final String factory_address = "0x53Ac62b938119c042DDf1023C67824b737F5A17b";
     protected Credentials credentials;
     protected Web3j web3j;
     protected Utils utils;

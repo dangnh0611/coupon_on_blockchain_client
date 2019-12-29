@@ -97,13 +97,15 @@ public class Bearer extends General {
                 new EthFilter(
                         DefaultBlockParameterName.EARLIEST,
                         DefaultBlockParameterName.LATEST,
-                        this.factory_address).addSingleTopic(EventEncoder.encode(CampainFactory.NEWCAMPAIN_EVENT)).addOptionalTopics(null,"0x0000000000000000000000000000000000000000000000000000000000000001" );
+                        this.factory_address).addSingleTopic(EventEncoder.encode(CampainFactory.NEWCAMPAIN_EVENT)).addNullTopic().addOptionalTopics("0x0000000000000000000000000000000000000000000000000000000000000001");
         List<CampainFactory.NewCampainEventResponse> events= new ArrayList<CampainFactory.NewCampainEventResponse>();
         Disposable sub = this.factory.newCampainEventFlowable(filter).subscribe(event->{events.add(event);});
         sub.dispose();
         return events;
     }
 
-
+    public void getFreeCoupon(String campain_address) throws Exception{
+        this.utils.loadCampain(campain_address).free_acquire_from_issuer().sendAsync().get();
+    }
 
 }

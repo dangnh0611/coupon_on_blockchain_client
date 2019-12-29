@@ -12,12 +12,13 @@ import org.web3j.utils.Numeric;
 import java.math.BigInteger;
 import java.util.Collections;
 
+import static org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT;
+import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
+
 public class Utils {
 
     private Web3j web3j;
     private Credentials credentials;
-    public final BigInteger DEFAULT_GASPRICE= BigInteger.valueOf(6L);
-    public final BigInteger DEFAULT_GASLIMIT= BigInteger.valueOf(500000L);
 
     public Utils(Web3j web3j, Credentials credentials){
         this.web3j=web3j;
@@ -25,11 +26,11 @@ public class Utils {
     }
 
     public Campain loadCampain(String address){
-        return Campain.load(address, web3j, credentials, BigInteger.valueOf(3L), BigInteger.valueOf(300000L));
+        return Campain.load(address, web3j, credentials, BigInteger.valueOf(8000000000L), BigInteger.valueOf(500000L) );
     }
 
     public CampainFactory loadFactory(String address){
-        return CampainFactory.load(address, web3j, credentials, BigInteger.valueOf(3L), BigInteger.valueOf(700000L));
+        return CampainFactory.load(address, web3j, credentials, BigInteger.valueOf(8000000000L), BigInteger.valueOf(700000L) );
     }
 
     public static byte[] hexStringToByteArray(String s) {

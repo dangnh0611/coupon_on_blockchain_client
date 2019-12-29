@@ -102,4 +102,8 @@ public class Issuer extends General {
                 .sendAsync().get();
     }
 
+    public void giveFreeCouponTo(String campain_address, String bearer_address) throws  Exception{
+        this.utils.loadCampain(campain_address).give_coupon_to(bearer_address).sendAsync().get();
+    }
+
 }
